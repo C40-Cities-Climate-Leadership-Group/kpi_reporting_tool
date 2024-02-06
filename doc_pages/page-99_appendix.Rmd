@@ -1,0 +1,21 @@
+
+
+
+Appendix
+=====================================
+
+Row
+-------------------------------------
+
+### C40 Cities: GPC inventories
+
+```{r}
+hchart(
+  tab_inventories,
+  "item",
+  hcaes(name = n_inventories_range, y = n, color = c("#d4444d", "#fed939", "#03c245")),
+  name = "Number of cities",
+  marker = list(symbol = "square"),
+  showInLegend = TRUE
+  )
+```

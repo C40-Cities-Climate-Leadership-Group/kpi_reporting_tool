@@ -1,0 +1,276 @@
+
+Modeshare  {data-navmenu="Transport" data-height='4500px' }
+=====================================
+
+Row
+-------------------------------------
+
+```{r eval = FALSE}
+
+#df_trips <-
+df_table_trips_tot <- df_modeshare |> 
+  #select(c40_region, year, trips_n) |> 
+  summarise(trips_n = sum(trips_n),
+            km_n = sum(km_n)
+            .by = "year") |> 
+  mutate(trips_perc = round(c40_city_wide / sum(c40_city_wide), 2),
+         col_color = case_when(trips_perc > 0 & trips_perc < 0.30 ~ c40_colors("red"),
+                               trips_perc > 0.30 & trips_perc < 0.60 ~ c40_colors("yellow"),
+                               trips_perc > 0.60 ~ c40_colors("green")),
+         c40_region = "C40 city wide") |> 
+  select(-c40_city_wide) |> 
+  pivot_wider(names_from = "year", values_from = c("trips_perc", "col_color"))
+
+df_table_trips_reg <-   df_modeshare |> 
+  select(c40_region, year, trips_perc) |> 
+  mutate(trips_perc = trips_perc / 100,
+         col_color = case_when(trips_perc > 0 & trips_perc < 0.30 ~ c40_colors("red"),
+                               trips_perc > 0.30 & trips_perc < 0.60 ~ c40_colors("yellow"),
+                               trips_perc > 0.60 ~ c40_colors("green"))) |> 
+  pivot_wider(names_from = "year", values_from = c("trips_perc", "col_color"))
+  
+table_c40_wide <- reactable(
+  df_table_trips_tot,
+  pagination = FALSE,
+  columns = list(
+    # trips_perc_2018 = colDef(name = "2018",
+    #                          cell = data_bars(df_table_trips_tot, text_position = "inside-end",  number_fmt = scales::percent,
+    #                                           max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2018")),
+    # trips_perc_2019 = colDef(name = "2019",
+    #                          cell = data_bars(df_table_trips_tot, text_position = "inside-end",  number_fmt = scales::percent,
+    #                                           max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2019")),
+    # trips_perc_2020 = colDef(name = "2020",
+    #                          cell = data_bars(df_table_trips_tot, text_position = "inside-end",  number_fmt = scales::percent,
+    #                                           max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2020")),
+    # trips_perc_2021 = colDef(name = "2021",
+    #                          cell = data_bars(df_table_trips_tot, text_position = "inside-end",  number_fmt = scales::percent,
+    #                                           max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2021")),
+    trips_perc_2022 = colDef(name = "2022",
+                             cell = data_bars(df_table_trips_tot, text_position = "inside-end",  number_fmt = scales::percent,
+                                              max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2022")),
+    col_color_2018 = colDef(show = FALSE),
+    col_color_2019 = colDef(show = FALSE),
+    col_color_2020 = colDef(show = FALSE),
+    col_color_2021 = colDef(show = FALSE),
+    col_color_2022 = colDef(show = FALSE)
+  )
+)
+
+table_regions <- reactable(
+  df_table_trips_reg,
+  pagination = FALSE,
+  columns = list(
+    trips_perc_2018 = colDef(name = "2018",
+                             cell = data_bars(df_table_trips_reg, text_position = "inside-end",  number_fmt = scales::percent,
+                                              max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2018")),
+    trips_perc_2019 = colDef(name = "2019",
+                             cell = data_bars(df_table_trips_reg, text_position = "inside-end",  number_fmt = scales::percent,
+                                              max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2019")),
+    trips_perc_2020 = colDef(name = "2020",
+                             cell = data_bars(df_table_trips_reg, text_position = "inside-end",  number_fmt = scales::percent,
+                                              max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2020")),
+    trips_perc_2021 = colDef(name = "2021",
+                             cell = data_bars(df_table_trips_reg, text_position = "inside-end",  number_fmt = scales::percent,
+                                              max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2021")),
+    trips_perc_2022 = colDef(name = "2022",
+                             cell = data_bars(df_table_trips_reg, text_position = "inside-end",  number_fmt = scales::percent,
+                                              max_value = 1, box_shadow = TRUE, fill_color_ref = "col_color_2022")),
+    col_color_2018 = colDef(show = FALSE),
+    col_color_2019 = colDef(show = FALSE),
+    col_color_2020 = colDef(show = FALSE),
+    col_color_2021 = colDef(show = FALSE),
+    col_color_2022 = colDef(show = FALSE)
+  )
+)
+```
+
+
+```{r eval = FALSE}
+page_fillable(
+  # theme = bs_theme(
+    #bg = "black", fg = 'white', primary = 'red', secondary = 'blue',  
+    # bootswatch = 'bootstrap',
+    #                version = 5),
+  #theme = bs_theme(bg = "white", fg = 'black', primary = 'red', secondary = 'blue', version = 4),
+  h1("On/Off track"),
+  card(
+    card_header("C40 city wide"),
+  #h2("C40 city wide"),
+  layout_columns(
+  #layout_column_wrap(
+    #width = "600px",
+    width = 1/2,
+    fill = FALSE,
+    modeshare_box(df_modeshare, "Latin America")
+  )
+  ),
+  card(
+    card_header("Regions"),
+  layout_columns(
+  #layout_column_wrap(
+    width = "150px",
+    fill = FALSE,
+    modeshare_box(df_modeshare, "Africa"), modeshare_box(df_modeshare, "Europe")
+  ),
+  layout_columns(
+  #layout_column_wrap(
+    width = "150px",
+    fill = FALSE,
+    modeshare_box(df_modeshare, "Africa"), modeshare_box(df_modeshare, "Europe")
+  )
+  )
+)
+
+```
+
+
+
+
+```{r}
+df_modeshare_table <- df_modeshare %>%
+  filter(year == 2022) %>%  
+  select(-mode_aggregated, -year) %>%  
+  mutate(across(ends_with("perc"), ~ ./100),
+         col_color_trips = case_when(trips_perc > 0 & trips_perc < 0.30 ~ c40_colors("red"),
+                               trips_perc > 0.30 & trips_perc < 0.60 ~ c40_colors("yellow"),
+                               trips_perc > 0.60 ~ c40_colors("green")),
+         col_color_km = case_when(km_perc > 0 & km_perc < 0.30 ~ c40_colors("red"),
+                               km_perc > 0.30 & km_perc < 0.60 ~ c40_colors("yellow"),
+                               km_perc > 0.60 ~ c40_colors("green"))) %>%  
+  relocate(c40_region, trips_n, trips_perc, km_n, km_perc)
+
+
+df_sparkline_trips_perc <- df_modeshare %>%
+  group_by(c40_region) %>%
+  summarise(trips_sparkline = list(trips_perc))
+
+df_sparkline_km_perc <- df_modeshare %>%
+  group_by(c40_region) %>%
+  summarise(km_sparkline = list(km_perc))
+
+df_modeshare_table <- df_modeshare_table |> 
+  left_join(df_sparkline_trips_perc, by = "c40_region") |> 
+  left_join(df_sparkline_km_perc, by = "c40_region")
+
+# Image source
+img_src <- knitr::image_uri(here::here("style/img/Transport.png"))
+```
+
+```{r}
+page_fillable(
+  br(),
+  h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'> Mode share: Mass transit, cycling and walking")))),
+  br(),
+  layout_column_wrap(
+    width = "150px",
+    card(
+      modeshare_table(df_modeshare_table, 
+                      c40_city_wide = TRUE)
+    )
+  ),
+  layout_column_wrap(
+    width = "150px",
+    card(
+      modeshare_table(df_modeshare_table, 
+                      c40_city_wide = FALSE)
+    )
+  )
+)
+```
+
+
+EV Charging points  {data-navmenu="Transport" data-height='4500px' }
+=====================================
+
+Row
+-------------------------------------
+
+```{r}
+library(here)
+source(here("etl/00-libraries.R"))
+source(here("etl/01_extract.R"))
+source(here("doc_pages/ev/ev_maps.R"))
+```
+
+
+```{r}
+viz_ev_europe <- girafe(ggobj = eu_plot + eu_table, pointsize = 12,
+                        width_svg = 12, height_svg = 9) |> 
+  girafe_options(opts_toolbar(position = "topright", 
+                              delay_mouseout = 3000, 
+                              pngname = "ev_europe"),
+                 opts_tooltip(
+                   opacity = 0.8, 
+                   use_fill = TRUE,
+                   use_stroke = TRUE, 
+                   css = "padding:5pt;font-size:1rem;color:white"),
+                 opts_zoom(max = 1),
+                 opts_hover(
+                   # css = girafe_css(
+                   #   css = "stroke:'#23BCED;fill:'#23BCED';opacity:0.4",
+                   #   text = "stroke:'#23BCED;fill:'#23BCED';fill-opacity:1;"
+                   # )),
+                   #css = "fill:wheat;stroke:'#23BCED';r:5pt;"),
+                   css = girafe_css(
+                     css = "fill:#03c245;stroke:black;",
+                     #text = "stroke:none;fill:red;"
+                   )),
+                 opts_sizing(rescale = FALSE, width = 1)
+  )
+
+viz_ev_north_america <- girafe(ggobj = na_plot + na_table, pointsize = 12,
+                               width_svg = 14, height_svg = 11) |> 
+  girafe_options(opts_toolbar(position = "topright", 
+                              delay_mouseout = 3000, 
+                              pngname = "ev_north_america"),
+                 opts_tooltip(
+                   opacity = 0.8, 
+                   use_fill = TRUE,
+                   use_stroke = TRUE, 
+                   css = "padding:5pt;font-size:1rem;color:white"),
+                 opts_zoom(max = 1),
+                 opts_hover(
+                   # css = girafe_css(
+                   #   css = "stroke:'#23BCED;fill:'#23BCED';opacity:0.4",
+                   #   text = "stroke:'#23BCED;fill:'#23BCED';fill-opacity:1;"
+                   # )),
+                   #css = "fill:wheat;stroke:'#23BCED';r:5pt;"),
+                   css = girafe_css(
+                     css = "fill:#03c245;stroke:black;",
+                     #text = "stroke:none;fill:red;"
+                   )),
+                 opts_sizing(rescale = FALSE, width = 1)
+  )
+
+```
+
+```{r}
+img_src <- knitr::image_uri(here::here("style/img/Transport.png"))
+
+page_fillable(
+  br(),
+  h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'> EV Charging points per millon population")))),
+  br(),
+  layout_column_wrap(
+    navset_card_tab(
+      nav_panel(
+        title = "Europe",
+        fluidRow(
+          card(full_screen = TRUE,
+               viz_ev_europe
+          )
+        )
+      ),
+      nav_panel(
+        title = "North America",
+        fluidRow(
+          card(full_screen = TRUE,
+               viz_ev_north_america
+          )
+        )
+      )
+    )
+  )
+)
+```
+

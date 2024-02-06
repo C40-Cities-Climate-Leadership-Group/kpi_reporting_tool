@@ -1,0 +1,97 @@
+
+
+Charge Points (EVs)
+=====================================
+
+Row
+-------------------------------------
+
+```{r}
+library(here)
+source(here("etl/00-libraries.R"))
+source(here("etl/01_extract.R"))
+source(here("doc_pages/ev/ev_maps.R"))
+```
+
+
+```{r}
+viz_ev_europe <- girafe(ggobj = eu_plot + eu_table, pointsize = 12,
+                        width_svg = 12, height_svg = 9) |> 
+  girafe_options(opts_toolbar(position = "topright", 
+                              delay_mouseout = 3000, 
+                              pngname = "ev_europe"),
+                 opts_tooltip(
+                   opacity = 0.8, 
+                   use_fill = TRUE,
+                   use_stroke = TRUE, 
+                   css = "padding:5pt;font-size:1rem;color:white"),
+                 opts_zoom(max = 1),
+                 opts_hover(
+                   # css = girafe_css(
+                   #   css = "stroke:'#23BCED;fill:'#23BCED';opacity:0.4",
+                   #   text = "stroke:'#23BCED;fill:'#23BCED';fill-opacity:1;"
+                   # )),
+                   #css = "fill:wheat;stroke:'#23BCED';r:5pt;"),
+                   css = girafe_css(
+                     css = "fill:#03c245;stroke:black;",
+                     #text = "stroke:none;fill:red;"
+                   )),
+                 opts_sizing(rescale = FALSE, width = 1)
+  )
+
+viz_ev_north_america <- girafe(ggobj = na_plot + na_table, pointsize = 12,
+                               width_svg = 14, height_svg = 11) |> 
+  girafe_options(opts_toolbar(position = "topright", 
+                              delay_mouseout = 3000, 
+                              pngname = "ev_north_america"),
+                 opts_tooltip(
+                   opacity = 0.8, 
+                   use_fill = TRUE,
+                   use_stroke = TRUE, 
+                   css = "padding:5pt;font-size:1rem;color:white"),
+                 opts_zoom(max = 1),
+                 opts_hover(
+                   # css = girafe_css(
+                   #   css = "stroke:'#23BCED;fill:'#23BCED';opacity:0.4",
+                   #   text = "stroke:'#23BCED;fill:'#23BCED';fill-opacity:1;"
+                   # )),
+                   #css = "fill:wheat;stroke:'#23BCED';r:5pt;"),
+                   css = girafe_css(
+                     css = "fill:#03c245;stroke:black;",
+                     #text = "stroke:none;fill:red;"
+                   )),
+                 opts_sizing(rescale = FALSE, width = 1)
+  )
+
+```
+
+```{r}
+img_src <- knitr::image_uri(here::here("style/img/Transport.png"))
+
+page_fillable(
+  br(),
+  h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'> EV Charging points per millon population")))),
+  br(),
+  layout_column_wrap(
+    navset_card_tab(
+      nav_panel(
+        title = "Europe",
+        fluidRow(
+          card(full_screen = TRUE,
+               viz_ev_europe
+          )
+        )
+      ),
+      nav_panel(
+        title = "North America",
+        fluidRow(
+          card(full_screen = TRUE,
+               viz_ev_north_america
+          )
+        )
+      )
+    )
+  )
+)
+```
+

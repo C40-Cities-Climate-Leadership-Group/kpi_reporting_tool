@@ -1,0 +1,133 @@
+
+
+Summary  
+=====================================
+
+Row
+-------------------------------------
+
+```{r}
+regions <- str_replace_all(unique(df_kpi_emissions$entity), "\n", " ")
+regions <- str_replace_all(regions, ",", "")
+regions <- tolower(str_replace_all(regions, " ", "_"))
+
+for(i in seq_along(regions)){
+  obj <- paste0("val_", regions[i])
+  assign(obj, 
+         df_kpi_emissions |> 
+           #mutate(entity = str_replac)
+           filter(emission_indicator == 'absolute' & entity == unique(df_kpi_emissions$entity)[i]) |> 
+           select(on_off_track_target23) |> 
+           pull() * 100)
+}
+```
+
+
+```{r}
+vbs <- list(
+  value_box(
+    title = "C40 City Wide",
+    value = paste0(format(val_c40_wide_total, digits = 3), "%"),
+    # showcase = ifelse(val_c40_wide_total > -10, bs_icon("calendar2-check"), 
+    #                   ifelse((val_c40_wide_total >= -12 & val_c40_wide_total <= -10), bs_icon("cone-striped"), 
+    #                          bs_icon("calendar2-x"))),
+    showcase = bs_icon("cone-striped"),
+    theme = ifelse(val_c40_wide_total > -10, "green", 
+                   ifelse(val_c40_wide_total >= -12 & val_c40_wide_total <= -10,"yellow", "red"))
+  ),
+  value_box(
+    title = "Africa",
+    value = paste0(format(val_africa, digits = 3), "%"),
+    showcase = bs_icon("calendar2-check"),
+    theme = ifelse(val_africa > -10, "green", 
+                   ifelse(val_africa >= -12 & val_africa <= -10,"yellow", "red"))
+  ),
+  value_box(
+    title = "Central East Asia",
+    value = paste0(format(val_central_east_asia, digits = 3), "%"),
+    showcase = bs_icon("calendar2-x"),
+    theme = ifelse(val_central_east_asia > -10, "green", 
+                   ifelse(val_central_east_asia >= -12 & val_central_east_asia <= -10,"yellow", "red"))
+  ),
+  value_box(
+    title = "East, Southeast Asia and Oceania",
+    value = paste0(format(val_east_southeast_asia_and_oceania, digits = 3), "%"),
+    showcase = bs_icon("cone-striped"),
+    theme = ifelse(val_east_southeast_asia_and_oceania > -10, "green", 
+                   ifelse(val_east_southeast_asia_and_oceania >= -12 & val_east_southeast_asia_and_oceania <= -10,"yellow", "red"))
+  ),
+  value_box(
+    title = "Central East Asia",
+    value = paste0(format(val_central_east_asia, digits = 3), "%"),
+    showcase = bs_icon("calendar2-x"),
+    theme = ifelse(val_central_east_asia > -10, "green", 
+                   ifelse(val_central_east_asia >= -12 & val_central_east_asia <= -10,"yellow", "red"))
+  ),
+  value_box(
+    title = "South and West Asia",
+    value = paste0(format(val_south_and_west_asia, digits = 3), "%"),
+    showcase = bs_icon("calendar2-x"),
+    theme = ifelse(val_south_and_west_asia > -10, c40_colors("green"), 
+                   ifelse(val_south_and_west_asia >= -12 & val_south_and_west_asia <= -10,"yellow", "red"))
+  ),
+  value_box(
+    title = "Latin America",
+    value = paste0(format(val_latin_america, digits = 3), "%"),
+    showcase = bs_icon("calendar2-x"),
+    theme = ifelse(val_latin_america > -10, "green", 
+                   ifelse(val_latin_america >= -12 & val_latin_america <= -10,"yellow", "red"))
+  ),
+  value_box(
+    title = "Europe",
+    value = paste0(format(val_europe, digits = 3), "%"),
+    showcase = bs_icon("calendar2-check"),
+    theme = ifelse(val_europe > -10, "green", 
+                   ifelse(val_europe >= -12 & val_europe <= -10,"yellow", "red"))
+  ),
+  value_box(
+    title = "North America",
+    value = paste0(format(val_north_america, digits = 3), "%"),
+    showcase = bs_icon("calendar2-check"),
+    theme = ifelse(val_north_america > -10, "green", 
+                   ifelse(val_north_america >= -12 & val_north_america <= -10,"yellow", "red"))
+  )
+)
+
+img_src <- knitr::image_uri(here::here("style/img/World.png"))
+
+page_fillable(
+  # theme = bs_theme(
+    #bg = "black", fg = 'white', primary = 'red', secondary = 'blue',  
+    # bootswatch = 'bootstrap',
+    #                version = 5),
+  #theme = bs_theme(bg = "white", fg = 'black', primary = 'red', secondary = 'blue', version = 4),
+  br(),
+  h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'> GHG emissions - On/Off track")))),
+  br(),
+  card(
+    card_header("C40 city wide"),
+  #h2("C40 city wide"),
+  layout_columns(
+  #layout_column_wrap(
+    width = "600px",
+    fill = FALSE,
+    vbs[[1]]
+  )
+  ),
+  card(
+    card_header("Regions"),
+  layout_columns(
+  #layout_column_wrap(
+    width = "150px",
+    fill = FALSE,
+    vbs[[2]],vbs[[3]],vbs[[4]],vbs[[5]]
+  ),
+  layout_columns(
+  #layout_column_wrap(
+    width = "150px",
+    fill = FALSE,
+    vbs[[6]],vbs[[7]], vbs[[8]], vbs[[9]]
+  )
+  )
+)
+```

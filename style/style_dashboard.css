@@ -1,0 +1,133 @@
+
+* {
+ font-family: Fira mono;
+}
+
+h2 {
+  font-size: 20pt;
+  color: #23BCED;
+}
+
+.card {
+  box-shadow: 0px 8px 8px -6px rgba(0,0,0,.5);
+}
+
+.card-header {
+  background-color: white;
+  font-weight: 900;
+  color:  black;
+}
+
+.navbar{
+    box-shadow: 0px 8px 8px -6px rgba(0,0,0,.5);
+    }
+
+.navbar-nav > li{
+  padding-left:15px;
+  padding-right:15px;
+}
+
+.navbar-nav > li.active > a,
+.navbar-nav > li > a:focus, 
+.navbar-nav > li > a:hover {
+  border: 0;
+  color: black;
+  border: none;
+  border-bottom: 3px solid black;
+}
+
+/*
+.navbar {
+  background-color: red;
+}
+
+
+.navbar-fixed-top{
+  background-color: brown;
+}
+
+.navbar-brand {
+  background-color: white;
+  color: black;
+}
+
+.navbar-header {
+  background-color: white;
+  color: black;
+}
+
+.container-fluid {
+  background-color: white;
+  
+}
+*/
+
+.nav-tabs {
+  background-color: white;
+  width: 900px;
+  display: flex !important;
+  justify-content: right !important;
+}
+
+.nav-tabs > li > a {
+  color: lightgrey; /* Text color */
+  text-decoration: none;
+  border: none;
+  border-radius: 0; /* Optional: Remove border-radius as well */
+}
+
+.nav-tabs > li > a {
+  color: lightgrey; /* Text color */
+  text-decoration: none;
+  border: none;
+  border-radius: 0; /* Optional: Remove border-radius as well */
+}
+
+
+.c40-tabs-2 .nav-tabs  li.active > a, 
+.c40-tabs-2 .nav-tabs  li.active > a:focus, 
+.c40-tabs-2 .nav-tabs  li.active > a:hover {
+  border: 0;
+  color: #03c245;
+  border: none;
+  border-bottom: 3px solid #03c245;
+}
+
+
+.btn-info {
+  background-color: white !important;
+  color: black !important;
+  border: none !important;
+  outline: none !important;
+  /*position: relative;
+  left: 510px;
+  top: 395px;
+  z-index: 1;*/
+}
+
+
+.tag {
+  display: inline-block;
+  padding: 0.125rem 0.75rem;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.status-on-track {
+  background: hsl(116, 60%, 90%);
+  color: hsl(116, 30%, 25%);
+}
+
+.status-slightly-delayed {
+  background: hsl(230, 70%, 90%);
+  color: hsl(230, 45%, 30%);
+}
+
+.status-delayed {
+  background: hsl(350, 70%, 90%);
+  color: hsl(350, 45%, 30%);
+}
+
+
+

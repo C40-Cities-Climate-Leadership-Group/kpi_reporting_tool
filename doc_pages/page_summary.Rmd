@@ -1,0 +1,269 @@
+
+
+CIFF  {data-navmenu="Summary" data-height='4500px' }
+=====================================
+
+Row
+-------------------------------------
+
+```{r echo=FALSE}
+library(reactable)
+library(reactablefmtr)
+library(dplyr)
+library(tidyr)
+library(googlesheets4)
+library(glue)
+library(htmltools)
+library(bslib)
+library(htmltools)
+```
+```{r}
+table_ciff <- function(df){
+
+  df  |> 
+  reactable(
+    defaultColDef = colDef(
+      na = '-', 
+      align = "left",
+      vAlign = 'center',
+      style = list(fontSize = '0.7rem'),
+      headerStyle = list(fontSize = '0.8rem')
+      ),
+    columns = 
+        list(
+          text = colDef(show = FALSE),
+          indicator_id = colDef(show = FALSE),
+          indicator_label = colDef(name = "Indicator", show = TRUE, minWidth = 200),
+          target_baseline_2020 = colDef(name = "Baseline 2020", show = TRUE, minWidth = 80),
+          target_2021 = colDef(name = "2021", show = TRUE, minWidth = style_min_width),
+          target_2022 = colDef(name = "2022", show = TRUE, minWidth = style_min_width),
+          target_2023 = colDef(name = "2023", show = TRUE, minWidth = style_min_width),
+          target_2024 = colDef(name = "2024", show = TRUE, minWidth = style_min_width,
+                               style = style_body_current, 
+                               headerStyle = style_header_current),
+          target_2030 = colDef(name = "2030", show = TRUE, minWidth = style_min_width),
+          target_2050 = colDef(name = "2050", show = TRUE, minWidth = style_min_width),
+          emissions_actual = colDef(name = "Actual", show = TRUE, minWidth = 60,
+                                    style = style_body_current, 
+                               headerStyle = style_header_current),
+          variance = colDef(name = "Variance", show = TRUE),
+          driver_of_success = colDef(show = FALSE)
+        ),
+    style = list(fontFamily = "Fira mono", fontSize = "0.875rem"),
+    borderless = FALSE,
+    striped = FALSE,
+    bordered = FALSE,
+    highlight = TRUE,
+    outlined = TRUE,
+    wrap = TRUE,
+    filterable = FALSE,
+    showPageSizeOptions = TRUE
+    )
+}
+```
+
+
+```{r}
+### Load data
+# url <- "https://docs.google.com/spreadsheets/d/1sX_hUZ3hQcgaLOUfiavfPMHsfx3-SSB7QA8kzQ0vul8/edit#gid=0"
+# df_ciff <- read_sheet(url, sheet = 2) |>
+#   janitor::clean_names()
+# 
+# saveRDS(df_ciff, "df_ciff.RDS")
+
+style_min_width <- 50
+style_body_current <- list(backgroundColor = "#f7f7f7", fontSize = '0.75rem',fontWeight = "bold")
+style_header_current <- list(backgroundColor = "#f7f7f7", fontSize = '0.8rem',fontWeight = "bold")
+
+df_ciff <- readRDS(here::here("doc_pages/df_ciff.RDS")) |> 
+  select(text, indicator_id, indicator_label, starts_with("target"), emissions_actual, variance, driver_of_success) |> 
+  mutate(variance = round(variance * 100, 1))
+
+
+### Inventory KPIs
+df_ciff_inv <- df_ciff |> 
+  filter(indicator_id %in% c(1,2))
+
+table_inv <- df_ciff_inv |> 
+  table_ciff()
+
+
+### Air Quality KPIs
+df_ciff_aq <- df_ciff |> 
+  filter(indicator_id %in% c(3:6))
+
+table_aq <- df_ciff_aq |> 
+  table_ciff()
+```
+
+```{r}
+img_src <- knitr::image_uri(here::here("style/img/c40_logo.png"))
+img_src_2 <- knitr::image_uri(here::here("style/img/under-construction.png"))
+
+
+page_fillable(
+  
+  # h1(strong(reactablefmtr::html(glue::glue("Cascade to impact - <img src={img_src} width='60' height='55'> <p style='color: #87CEEB'>Feb-2024</p>")))),
+  h1(strong(reactablefmtr::html(glue::glue("<img src={img_src_2} width='60' height='55'> Page under maintainance, values inside are not valid")))),
+  
+  layout_column_wrap(height = 250, fill = FALSE,
+    style = css(grid_template_columns = "3fr 9fr 3fr"),
+    card(card_header("Programme Objectives"),
+         div(em(unique(df_ciff_inv$text)))
+    ),
+    card(full_screen = TRUE,
+         table_inv),
+    card(card_header("Drivers of success"),
+         div(em(unique(df_ciff_inv$driver_of_success)))
+    )
+    ),
+  layout_column_wrap(height = 300, fill = FALSE,
+    style = css(grid_template_columns = "3fr 9fr 3fr"),
+    card(card_header("Programme Objectives"),
+         div(em(unique(df_ciff_aq$text)))
+    ),
+    card(full_screen = TRUE,
+      table_aq),
+    card(card_header("Drivers of success"),
+         div(em(unique(df_ciff_aq$driver_of_success)))
+    )
+    )
+  )
+```
+
+
+
+PRB  {data-navmenu="Summary" data-height='4500px' }
+=====================================
+
+Row
+-------------------------------------
+
+```{css, echo=FALSE}
+
+.tag {
+  display: inline-block;
+  padding: 0.125rem 0.75rem;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.status-on-track {
+  background: hsl(116, 60%, 90%);
+  color: hsl(116, 30%, 25%);
+}
+
+.status-slightly-delayed {
+  background: hsl(230, 70%, 90%);
+  color: hsl(230, 45%, 30%);
+}
+
+.status-delayed {
+  background: hsl(350, 70%, 90%);
+  color: hsl(350, 45%, 30%);
+}
+
+```
+
+```{r}
+library(shinyalert)
+
+```
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(reactable)
+library(googlesheets4)
+library(reactable)
+library(reactablefmtr)
+library(tidyverse)
+library(glue)
+library(htmltools)
+
+### Load data
+url <- "https://docs.google.com/spreadsheets/d/1sX_hUZ3hQcgaLOUfiavfPMHsfx3-SSB7QA8kzQ0vul8/edit#gid=0"
+df_kpi <- read_sheet(url) |> 
+  janitor::clean_names()
+
+
+kpi_summary <- df_kpi  |> 
+  select(-id) |> 
+  relocate(status, .before = comment) |> 
+  reactable(
+    defaultColDef = colDef(
+      na = '-', 
+      align = "left",
+      vAlign = 'center'),
+    columns = 
+        list(
+          indicator = colDef(cell = function(value, index) {
+            description <- df_kpi$description[index]
+            div(div(style = "font-weight: 600", value),
+                div(style = "font-size: 0.75rem;color:grey", description))}
+            ),
+          description = colDef(show = FALSE),
+          baseline_2020 = colDef(name = "Baseline 2020"),
+          actual_2021 = colDef(name = "Actual 2021"),
+          end_of_year_2022_actual = colDef(name = "End of year 2022 Actual"),
+          target_2022 = colDef(name = "Target 2022"),
+          variance_from_target_22 = colDef(name = "Variance from Target ‘22"),
+          target_2024 = colDef(name = "Target 2024"),
+          #Status = colDef(name = "Status"),
+          status = colDef(show = TRUE, 
+                          cell = function(value) {
+                            class <- paste0("tag status-", tolower(value))
+                            div(class = class, value)
+                            }
+                          ),
+          comment = colDef(
+            name = "", sortable = FALSE,
+            cell = function() htmltools::tags$button("Show comments")
+          )
+        ),
+    onClick = JS("function(rowInfo, column) {
+    // Only handle click events on the 'details' column
+    if (column.id !== 'comment') {
+      return
+    }
+
+    // Display an alert dialog with details for the row
+    window.alert('Comments:' + rowInfo.values.comment)
+
+    // Send the click event to Shiny, which will be available in input$show_details
+    // Note that the row index starts at 0 in JavaScript, so we add 1
+    if (window.Shiny) {
+      Shiny.setInputValue('show_details', { index: rowInfo.index + 1 }, { priority: 'event' })
+    }
+  }"
+                 ),
+    #style = list(height = "600px", minWidth = "900px"),
+    borderless = FALSE,
+    striped = FALSE,
+    bordered = FALSE,
+    highlight = TRUE,
+    outlined = TRUE,
+    wrap = TRUE,
+    filterable = FALSE,
+    showPageSizeOptions = TRUE
+    #pageSizeOptions = c(4, 8, 12)
+    #elementId = glue::glue("mode_share_{indicator}_{measure}-table")
+  )
+
+```
+
+
+```{r}
+img_src_2 <- knitr::image_uri(here::here("style/img/under-construction.png"))
+
+page_fillable(
+  
+    h1(strong(reactablefmtr::html(glue::glue("<img src={img_src_2} width='60' height='55'> Page under maintainance, values inside are not valid")))),
+    
+  layout_column_wrap(height = "600px",
+    card(full_screen = TRUE,
+      kpi_summary
+    )
+  )
+)
+```

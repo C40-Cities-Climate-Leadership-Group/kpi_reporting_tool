@@ -1,0 +1,98 @@
+city_id,city,current_member,n_inventories,last_inventory
+4,Amman,TRUE,4,2019
+5,Amsterdam,TRUE,2,2020
+6,Athens,TRUE,7,2020
+7,Auckland,TRUE,11,2019
+8,Austin,TRUE,5,2020
+10,Barcelona,TRUE,9,2021
+650,Dhaka North,TRUE,2,2021
+12,Beijing,TRUE,0,NA
+13,Bengaluru,TRUE,1,2019
+14,Berlin,TRUE,1,2018
+15,Bogotá,TRUE,12,2021
+16,Boston,TRUE,16,2020
+17,Buenos Aires,TRUE,22,2021
+19,Cape Town,TRUE,5,2019
+22,Chengdu,TRUE,2,2016
+23,Chennai,TRUE,2,2018
+24,Chicago,TRUE,4,2019
+25,Copenhagen,TRUE,4,2018
+651,Dhaka South,TRUE,1,2021
+1,Abidjan,TRUE,1,2016
+2,Accra,TRUE,2,2018
+3,Addis Ababa,TRUE,2,2021
+209,Ahmedabad,TRUE,1,2020
+9,Bangkok,TRUE,4,2020
+26,Curitiba,TRUE,6,2020
+27,Dakar,TRUE,1,2016
+28,Dalian,TRUE,0,NA
+29,Dar es Salaam,TRUE,2,2020
+30,Delhi NCT,TRUE,1,2019
+32,Dubai,TRUE,2,2019
+33,Durban (eThekwini),TRUE,3,2019
+34,Ekurhuleni,TRUE,1,2018
+35,Freetown,TRUE,1,2018
+36,Fuzhou,TRUE,0,NA
+37,Guadalajara,TRUE,2,2018
+38,Guangzhou,TRUE,1,2015
+39,Hangzhou,TRUE,0,NA
+40,Hanoi,TRUE,1,2015
+41,Heidelberg,TRUE,4,2021
+42,Ho Chi Minh City,TRUE,2,2016
+43,Hong Kong,TRUE,4,2021
+44,Houston,TRUE,3,2020
+45,Istanbul,TRUE,4,2021
+47,Jakarta,TRUE,11,2020
+48,Johannesburg,TRUE,3,2019
+49,Karachi,TRUE,0,NA
+50,Kolkata,TRUE,1,2017
+51,Kuala Lumpur,TRUE,1,2020
+52,Lagos,TRUE,2,2019
+53,Lima,TRUE,3,2018
+54,Lisbon,TRUE,3,2020
+55,London,TRUE,5,2020
+56,Los Angeles,TRUE,8,2020
+57,Madrid,TRUE,8,2020
+58,Medellín,TRUE,7,2021
+59,Melbourne,TRUE,6,2020
+60,Mexico City,TRUE,5,2020
+61,Miami,TRUE,3,2021
+62,Milan,TRUE,6,2021
+63,Montréal,TRUE,7,2019
+65,Mumbai,TRUE,1,2019
+66,Nairobi,TRUE,2,2019
+67,Nanjing,TRUE,0,NA
+68,New Orleans,TRUE,3,2019
+69,New York City,TRUE,3,2020
+70,Oslo,TRUE,4,2021
+71,Paris,TRUE,6,2020
+72,Philadelphia,TRUE,1,2019
+73,Phoenix,TRUE,4,2020
+89,Stockholm,TRUE,6,2020
+90,Sydney,TRUE,14,2019
+91,São Paulo,TRUE,10,2019
+92,Tel Aviv-Yafo,TRUE,2,2019
+93,Tokyo,TRUE,8,2020
+94,Toronto,TRUE,7,2019
+95,Tshwane,TRUE,3,2020
+96,Vancouver,TRUE,16,2022
+98,Warsaw,TRUE,2,2018
+99,"Washington, DC",TRUE,11,2020
+100,Wuhan,TRUE,0,NA
+74,Portland,TRUE,7,2019
+75,Qingdao,TRUE,1,2015
+76,Quezon City,TRUE,2,2018
+77,Quito,TRUE,4,2021
+78,Rio de Janeiro,TRUE,10,2021
+79,Rome,TRUE,2,2019
+80,Rotterdam,TRUE,1,2019
+81,Salvador,TRUE,5,2018
+82,San Francisco,TRUE,7,2021
+83,Santiago,TRUE,1,2016
+84,Seattle,TRUE,8,2020
+85,Seoul,TRUE,3,2018
+86,Shanghai,TRUE,0,NA
+87,Shenzhen,TRUE,0,NA
+88,Singapore,TRUE,0,NA
+101,Yokohama,TRUE,5,2019
+102,Zhenjiang,TRUE,0,NA

@@ -1,0 +1,79 @@
+
+
+
+Export
+=====================================
+
+Row
+-------------------------------------
+
+```{r}
+library(downloadthis)
+
+
+     #......................KPI Emissions output......................
+df_export_xlsx_ghg <- df_kpi_emissions |>
+                        select(-id) |> 
+                        mutate(across(.cols = starts_with("on_off"), ~ round(. * 100, 1)))
+
+button_xlsx_ghg <- df_export_xlsx_ghg %>%
+  download_this(
+    output_name = glue::glue("kpi_emissions_{lubridate::today()}"),
+    output_extension = ".xlsx",
+    button_label = "Download",
+    button_type = "success",
+    has_icon = TRUE,
+    icon = "fa fa-save"
+  )
+
+button_ppt <- download_file(
+  path = here::here("doc_pages/export_files/output_ppt.pptx"),
+  output_name = glue::glue("kpi_emissions_{lubridate::today()}"),
+  button_label = "Download",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+
+
+     #......................KPI Transport output......................
+button_xlsx_modeshare <- df_modeshare %>%
+  download_this(
+    output_name = glue::glue("kpi_modeshare_{lubridate::today()}"),
+    output_extension = ".xlsx",
+    button_label = "Download",
+    button_type = "success",
+    has_icon = TRUE,
+    icon = "fa fa-save"
+  )
+```
+
+
+```{r}
+
+page_fillable(
+  h1("GHG Emissions"),
+  layout_column_wrap(
+    height = 150,
+    width = 1/3,
+    #list(
+      
+    card(height = 100,fill = TRUE,
+        card_header("Excel output"),
+        button_xlsx_ghg),
+      card(
+        card_header("Power Point output"),
+        button_ppt)
+    ),
+  h1("Transport - Mode Share"),
+  layout_column_wrap(
+    height = 150,
+    width = 1/3,
+    card(
+        card_header("Excel output"),
+        button_xlsx_modeshare)
+    )
+)
+```
+

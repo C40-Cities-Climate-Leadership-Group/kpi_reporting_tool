@@ -1,0 +1,295 @@
+
+
+
+Photo  {data-navmenu="GHG emissions" data-height='4500px' }
+=====================================  
+
+Row
+-------------------------------------
+
+```{r}
+table_absolute <- df_kpi_emissions |> 
+  ghg_table(indicator = "absolute")
+
+table_per_cap <- df_kpi_emissions |> 
+  ghg_table(indicator = "per capita")
+```
+
+```{r}
+img_src <- knitr::image_uri(here::here("style/img/World.png"))
+
+page_fillable(
+  br(),
+  h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'> GHG Emissions")))),
+  br(),
+  layout_column_wrap(
+    width = "150px",
+    navset_card_tab(
+      title = "Table summary",
+      full_screen = TRUE,
+      nav_panel(
+        "Absolute",
+        table_absolute
+      ),
+      nav_panel(
+        "Per capita",
+        table_per_cap
+      )
+    )
+  ),
+  layout_column_wrap(
+    width = "150px",
+    navset_card_tab(
+      title = "Emissions vs Targets",
+      full_screen = TRUE,
+      nav_panel(
+        "Absolute",
+        viz_emissions_vs_target_absolute_giraf
+      ),
+      nav_panel(
+        "Per capita",
+        viz_emissions_vs_target_percapita_giraf
+      )
+    )
+  )
+)
+```
+
+
+
+
+Film  {data-navmenu="GHG emissions" data-height='4500px' .tabset .c40-tabs-2 .tabset-fade}
+=====================================  
+
+Row
+-------------------------------------
+
+```{r}
+#source(here("scripts/viz_testing.R"))
+
+page_fillable(
+  br(),
+  h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'> GHG Emissions")))),
+  br(),
+  layout_column_wrap(
+    navset_card_tab(
+      title = "Deviation from the emission target", 
+      height = '1000px',
+      nav_panel(
+        title = "Absolute",
+        fluidRow(
+            card(
+              card_header(h2("C40 wide City")),
+              viz_city_tot_absolute
+          ),
+          navset_card_tab(
+            title = h2("Regions"),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[1],
+              viz_reg_1absolute
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[2],
+              viz_reg_2absolute
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[3],
+              viz_reg_3absolute
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[4],
+              viz_reg_4absolute
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[5],
+              viz_reg_5absolute
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[6],
+              viz_reg_6absolute
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[7],
+              viz_reg_7absolute
+            )
+          )
+        )
+      ),
+      nav_panel(
+        title = "Per capita",
+        fluidRow(
+            card(
+              card_header(h2("C40 wide City")),
+              viz_city_tot_percapita
+          ),
+          navset_card_tab(
+            title = h2("Regions"),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[1],
+              viz_reg_1percapita
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[2],
+              viz_reg_2percapita
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[3],
+              viz_reg_3percapita
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[4],
+              viz_reg_4percapita
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[5],
+              viz_reg_5percapita
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[6],
+              viz_reg_6percapita
+            ),
+            nav_panel(
+              title = unique(df_kpi_regional_emissions$entity)[7],
+              viz_reg_7percapita
+            )
+          )
+        )
+      )
+    )
+  )
+)
+```
+
+
+
+GHG Inventories  {data-navmenu="GHG emissions" data-height='4500px' .tabset .c40-tabs-2 .tabset-fade}
+=====================================  
+
+Row
+-------------------------------------
+
+```{r}
+export <- list(
+  list(text="PNG image",
+       onclick=JS("function () { 
+                  this.exportChart({ type: 'image/png' }); }")),
+  list(text="JPEG image",
+       onclick=JS("function () { 
+                  this.exportChart({ type: 'image/jpeg' }); }")),
+  list(text="SVG vector image",
+       onclick=JS("function () { 
+                  this.exportChart({ type: 'image/svg+xml' }); }")),
+  list(text="PDF document",
+       onclick=JS("function () { 
+                  this.exportChart({ type: 'application/pdf' }); }")),
+  list(separator=TRUE),
+  list(text="CSV document",
+       onclick=JS("function () { this.downloadCSV(); }")),
+  list(text="XLS document",
+       onclick=JS("function () { this.downloadXLS(); }")),
+  list(text="Show label",
+       onclick=JS('function() {
+          this.renderer.label("You just clicked a custom menu item.", 100, 100)
+          .attr({fill: "#a4edba", r: 5, padding: 10, zIndex: 10})
+          .css({fontSize: "1.5em"})
+          .add();
+        }'))
+)
+myMenuItems <- c("downloadPNG", "downloadJPEG", "downloadPDF", "downloadCSV")
+```
+
+```{r}
+pie_chart <- tab_inventories |>
+#set up highchart object
+  hchart("pie", 
+         #mapping for pie chart
+         hcaes(x = n_inventories_range, y = n, drilldown=n_inventories_range,
+               color = c(
+          "#d4444d", "#fed939", "#03c245")), 
+         name="Cities per number of inventories")|>
+  #add title
+  #hc_title(text = "Number of inventories") |> 
+  hc_plotOptions(pie = list(innerSize="70%"))
+
+
+help <- bs_button(bs_icon("info-circle", size = 30), button_type = "info", button_size = "small") |> 
+  bs_embed_tooltip(title = "Click on the graph category to see the year of every inventory", placement = "right")
+
+
+drilldown_chart <- pie_chart |>
+  hc_drilldown(
+    #map to data
+    series = list_parse(by_subtype),
+    allowPointDrilldown = TRUE,
+    #set stylings of data labels that offer drill down views
+    activeDataLabelStyle = list(
+      textDecoration="none",
+      color="black"
+    )
+  ) |> 
+  #hc_title(text="Cities per number of inventories available") |> 
+  hc_title(
+    text = glue::glue("<div>Cities per number of inventories available {help}</div>"),
+    style = list(color = "#22A884", useHTML = TRUE)) |> 
+  hc_xAxis(title = list(text = "Year")) |> 
+  hc_yAxis(title = list(text = "Number of cities")) |> 
+  hc_chart(
+           events = list(
+             drilldown = JS(
+               "function(){
+               this.title.update({text: 'Cities per inventory year'})
+               this.update({
+                  xAxis:{visible:true},
+                  yAxis:{visible:true}
+               })
+               }"
+             ),
+             drillup =  JS("function() {
+              this.title.update({text: 'Cities per number of inventories available'})
+              this.update({
+                xAxis:{visible:false},
+                yAxis:{visible:false}
+               })
+             }")
+           ))
+```
+
+
+```{r}
+reading_example <- bs_button(label = "Reading example", button_type = "default", button_size = "small") |> 
+  bs_embed_popover(title = glue::glue("🟩 category means: {tab_inventories[3, 2] |> pull()} cities have 2 or more inventories"))
+
+cities_w_inventory <- df_ghg_inventories |> 
+         filter(n_inventories > 0) |> 
+         summarise(n_cities = n()) |> 
+         pull(n_cities)
+
+page_fillable(
+  br(),
+  h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'> GHG Emissions")))),
+  br(),
+  card(
+    value_box(
+    title = "Cities with at least one inventory",
+    value = cities_w_inventory,
+    # showcase = ifelse(val_c40_wide_total > -10, bs_icon("calendar2-check"), 
+    #                   ifelse((val_c40_wide_total >= -12 & val_c40_wide_total <= -10), bs_icon("cone-striped"), 
+    #                          bs_icon("calendar2-x"))),
+    showcase = bs_icon("cone-striped"),
+    # theme = ifelse(val_c40_wide_total > -10, "green", 
+    #                ifelse(val_c40_wide_total >= -12 & val_c40_wide_total <= -10,"yellow", "red"))
+  )
+       ),
+  card(
+    card_header(
+      div(reading_example, help),
+      drilldown_chart
+    )
+  ),
+  use_bs_tooltip(),
+  use_bs_popover()
+)
+```
+
+
+

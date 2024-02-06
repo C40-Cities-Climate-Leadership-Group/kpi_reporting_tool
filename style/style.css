@@ -1,0 +1,163 @@
+/********************** FILE PROPERTIES *********************/
+html {
+    scroll-behavior: smooth;
+  }
+
+
+/********************** BODY *********************/
+* {
+ font-family: Fira mono;
+}
+
+/********************** TITLES *********************/
+h1 {
+  font-size: 26pt;
+  color: #8d77c8;
+}
+
+h2 {
+  font-size: 20pt;
+  color: #23BCED;
+}
+
+h3 {
+  font-size: 16pt;
+  color: #23BCED;
+}
+
+h4, h5, h6 {
+  font-size: 14pt;
+}
+
+.foot-note{
+  font-size: 12pt;
+  font-style: italic;
+}
+
+/**********************TOC style*********************/
+#TOC {
+  font-size: 12pt;
+  position: fixed;
+  left: 10px;
+  width: 170px;
+  /*max-width: fit-content;*/
+  white-space: nowrap;
+  overflow:auto;
+}
+
+
+#TOC ul li.active {
+  background-color: #03c245;
+  font-size: 14pt;
+}
+
+div:has(> #TOC) {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+
+/********************** Styles for the freeze panel **********************/
+
+
+.freeze-panel {
+    position: sticky;
+    width: 900px;
+    height: 120px;
+    top: 0;
+    background-color: white; /* Background color */
+    border-color: #333;
+    border: 2px lightgrey solid;
+    border-radius: 2rem;
+    border-style: groove;
+    padding: 0.5rem 1rem;
+  /*
+    background-color: #fed939; /* Set your desired background color */
+    z-index: 100; /* Ensure the panel is above other content */
+  }
+  
+  .filtertext {
+    height: 100px;
+    width: 900px;
+    text-indent:1em;
+  }
+
+
+/********************** Styles for the tabs **********************/
+
+/* Style for individual tab links */
+.nav-tabs {
+  background-color: white;
+  width: 900px;
+  display: flex !important;
+  justify-content: right !important;
+}
+
+.nav-tabs > li > a {
+  color: lightgrey; /* Text color */
+  text-decoration: none;
+  border: none;
+  border-radius: 0; /* Optional: Remove border-radius as well */
+}
+
+
+.c40-tabs-2 .nav-tabs  li.active > a, 
+.c40-tabs-2 .nav-tabs  li.active > a:focus, 
+.c40-tabs-2 .nav-tabs  li.active > a:hover {
+  border: 0;
+  color: #03c245;
+  border: none;
+  border-bottom: 3px solid #03c245;
+}
+
+
+.c40-tabs-2 .nav-tabs {
+  background-color: white; /* Background color */
+  border-color: #333;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+}
+
+.c40-tabs-2 .nav-tabs {
+  /*width: 900px; */
+}
+
+
+/********************** Styles for the pills **********************/
+.nav-pills {
+  color: #333;
+  font-size: 11pt;
+  display: flex !important;
+  justify-content: right !important;
+}
+
+.nav-pills > li {
+  color: #333;
+  font-size: 11pt;
+}
+
+.nav-pills > li.active > a, 
+.nav-pills > li.active > a:focus, 
+.nav-pills > li.active > a:hover {
+  background: transparent;
+  border: 0;
+  font-size: 12pt;
+  color: #333;
+  border: none;
+  border-bottom: 3px solid #333;
+}
+
+
+
+/********************** Data Portal Button**********************/
+.button-style {
+  position: absolute;
+  left: 1025px;
+  top: 140px;
+  background-color: #03c245;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 5px 5px 10px rgba(1, 1, 1, 1);
+  

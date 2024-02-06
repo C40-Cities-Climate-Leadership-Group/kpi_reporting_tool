@@ -1,0 +1,88 @@
+---
+title: "C40 KPI slides"
+author: "Business Planning and Reporting Team"
+date: 
+output: 
+  powerpoint_presentation:
+    reference_doc: template_ppt.pptx
+    #slide_level: 1
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+```{r}
+source(here("etl/00-libraries.R"))
+source(here("etl/01_extract.R"))
+source(here("etl/02_transform.R"))
+source(here("etl/viz.R"))
+```
+
+
+## GHG total breakdown by region - GtCO₂e - Absolute: actual vs. target
+
+```{r}
+viz_output_vs_absolute <- viz_emissions_vs_target_absolute
+ggsave(plot = viz_output_vs_absolute, 
+       path = here("doc_pages/export_files/img"),
+       filename = "viz_output_vs_absolute.png",
+       width = 20, height = 13,
+       units = "cm")
+```
+
+![](../../../kpi/doc_pages/export_files/img/viz_outout_absolute.png){width=50%}
+
+
+
+
+## GHG total breakdown by region - GtCO₂e - Per capita: actual vs. target
+
+```{r}
+viz_output_vs_percapita <- viz_emissions_vs_target_percapita
+ggsave(plot = viz_output_vs_percapita, 
+       path = here("kpi/doc_pages/export_files/img"),
+       filename = "viz_output_vs_percapita.png",
+       width = 20, height = 13,
+       units = "cm")
+```
+
+![](../../../kpi/doc_pages/export_files/img/viz_outout_percapita.png){width=50%}
+
+## GHG historical by region - GtCO₂e - TOTAL
+
+```{r}
+viz_output_hist_absolute <- viz_emissions_history_absolute
+ggsave(plot = viz_output_hist_absolute, 
+       path = here("kpi/doc_pages/export_files/img"),
+       filename = "viz_output_hist_absolute.png",
+       width = 20, height = 13,
+       units = "cm")
+```
+
+![](../../../kpi/doc_pages/export_files/img/viz_output_hist_absolute.png){width=50%}
+
+
+## GHG historical by region - tCO₂e - PER CAPITA
+
+```{r}
+viz_output_hist_percapita <- viz_emissions_history_percapita
+ggsave(plot = viz_output_hist_percapita, 
+       path = here("kpi/doc_pages/export_files/img"),
+       filename = "viz_output_hist_percapita.png",
+       width = 20, height = 13,
+       units = "cm")
+```
+
+![](../../../kpi/doc_pages/export_files/img/viz_output_hist_percapita.png){width=50%}
+
+
+## OVERALL GHG TREND
+
+## Mode share
+
+## Electric chargers
+
+## HIAs
+
+## City vs national gov emission reduction
