@@ -10,8 +10,8 @@ df_kpi_emissions <- df_kpi_wide_emissions |>
   bind_rows(df_kpi_regional_emissions) 
 
 variables <- c("baseline_2020", 
-               paste0("actual_", c(2015:2019, 2021:2024, 2030, 2050)),
-               paste0("target_", c(2015:2019, 2021:2024, 2030, 2050)))
+               paste0("actual_", c(2015:2024, 2030, 2050)),
+               paste0("target_", c(2015:2024, 2030, 2050)))
 
 df_kpi_emissions <- df_kpi_emissions |> 
   mutate(across(.cols = c("actual_emissions_tco2e", "target_emissions_tco2e"), ~ as.numeric(.))) |> 
@@ -39,16 +39,11 @@ df_kpi_emissions <- df_kpi_emissions |>
   rbind(df_kpi_emissions |> 
           filter(emission_indicator != "absolute")) |> 
   arrange(id)
-  # mutate(entity = str_wrap(entity, 10),
-  #        entity = factor(entity, 
-  #                        level = c("C40 wide\ntotal", "Central\nEast Asia", "East,\nSoutheast\nAsia and\nOceania",
-  #                                  "South and\nWest Asia", "Latin\nAmerica", "Europe", "North\nAmerica", "Africa" )))
 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                              GPC INVENTORIES                             ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 df_ghg_inventories <- df_ghg_inventories |> 
   mutate(n_inventories_range = case_when(n_inventories == 0 ~ "No inventories",
                                          n_inventories == 1 ~ "1 inventory",

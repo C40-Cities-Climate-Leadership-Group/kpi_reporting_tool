@@ -247,10 +247,9 @@ ghg_table <- function(df, indicator){
   table <- df |> 
     dplyr::filter(emission_indicator == indicator) |> 
     select(entity, 
-           baseline_2020, 
-           actual_2021, actual_2022, actual_2023, 
-           target_2021, target_2022, target_2023, target_2024, target_2030, target_2050,
-           #on_off_track_target22, 
+           #baseline_2020, 
+           actual_2020:actual_2023, 
+           target_2020:target_2024, target_2030, target_2050,
            on_off_track_target23) |> 
     left_join(df_plot, by = c("entity")) |> 
     gt(id = "one") |> 
@@ -261,7 +260,9 @@ ghg_table <- function(df, indicator){
     tab_spanner(label = md(ifelse(indicator == "absolute", 
                                   "**Emissions (gtCO2)**",
                                   "**Emissions (tCO2)**")),
-                columns = c("baseline_2020", "actual_2021", "actual_2022", "actual_2023")) |>  
+                columns = c(
+                  #"baseline_2020", 
+                  "actual_2021", "actual_2022", "actual_2023")) |>  
     tab_spanner(label = md(ifelse(indicator == "absolute",
                                   "**Targets (gtCO2)**",
                                   "**Targets (tCO2)**")),
@@ -269,11 +270,13 @@ ghg_table <- function(df, indicator){
     tab_spanner(label = md("**On/Off track**"), columns = starts_with("on_off")) |> 
     cols_label(
       entity = "**Entity**",
-      baseline_2020 = "**2020**",
+      #baseline_2020 = "**2020**",
       #actual_2023 = "**Mid year 2023**",
+      actual_2020 = "**2020**",
       actual_2021 = "**2021**",
       actual_2022 = "**2022**",
       actual_2023 = "**2023**",
+      target_2020 = "**2020**",
       target_2021 = "**2021**",
       target_2022 = "**2022**",
       target_2023 = "**2023**",
@@ -287,7 +290,9 @@ ghg_table <- function(df, indicator){
     ) |> 
     cols_align( align = c("center"), columns = everything()) |>  
     cols_align( align = c("left"), columns = entity) |> 
-    fmt_number(columns = c(baseline_2020, actual_2021, actual_2022, actual_2023, starts_with("target")), decimals = 2) |> 
+    fmt_number(columns = c(
+      #baseline_2020, 
+      actual_2020:actual_2023, starts_with("target")), decimals = 2) |> 
     fmt_percent(columns = starts_with("on_off"), decimals = 1) |> 
     gt_plt_sparkline(data, same_limit = FALSE, fig_dim = c(5,40),
                      palette = c("lightgrey", "black", "#03c245", "#ff614a", "black")) |> 
@@ -504,8 +509,138 @@ deviation_ribbon_plot2 <- function(df, per_capita=FALSE, plot_title="",
 
 
 
-target_deviation_barplot2 <- function(df, per_capita=FALSE, plot_title="",
-                                      year_min = 2020, year_max = 2023){
+# target_deviation_barplot2 <- function(df, per_capita=FALSE, plot_title="",
+#                                       year_min = 2020, year_max = 2023){
+#   
+#   if(per_capita == FALSE){
+#     
+#     selected_vars <- c("year", 
+#                        "actual_emissions_tco2e", 
+#                        "target_emissions_tco2e")
+#     
+#     year_var<-selected_vars[1]
+#     emissions_var<-selected_vars[2]
+#     target_var<-selected_vars[3]
+#     
+#     df_viz <- df |> 
+#       select(all_of(selected_vars)) |> 
+#       filter(year %in% year_min:year_max) |> 
+#       mutate(
+#         across(any_of(c(emissions_var, target_var)), ~ ./ 1000000000),
+#         across(where(is.numeric), as.double),
+#         across(where(is.numeric), round,3))
+#     
+#   } else {
+#     selected_vars <- c("year", 
+#                        "actual_emissions_per_capita_tco2e",
+#                        "target_emissions_per_capita_tco2e")
+#     
+#     year_var<-selected_vars[1]
+#     emissions_var<-selected_vars[2]
+#     target_var<-selected_vars[3]
+#     
+#     df_viz <- df |> 
+#       select(all_of(selected_vars)) |> 
+#       filter(year %in% year_min:year_max) |> 
+#       mutate(
+#         across(where(is.numeric), as.double),
+#         across(where(is.numeric), round,3))
+#   }
+#   
+#   df_viz <- df_viz |>
+#     mutate(diff =round((eval(parse(text=emissions_var))/eval(parse(text=target_var))-1)*100,2),
+#            diff_color=ifelse(diff <= 10, 0, 
+#                              ifelse(diff > 10 & diff <= 20, 1, 2)),
+#            #diff_color=ifelse(diff > 10, 2, diff_color),
+#            diff_color = as.factor(diff_color),
+#            label_position = ifelse(diff*1 >= 0, -0.5, 1.2))
+#   
+#   y_min <- ifelse(min(df_viz$diff) < 0, min(df_viz$diff) - sd(df_viz$diff), 0)
+#   y_max <- max(df_viz$diff) + sd(df_viz$diff)
+#   #y_max <- 0
+# 
+#   gg2 <- df_viz |> 
+#     ggplot() +
+#      # ylim(ifelse(min(df_viz$diff) < 0, min(df_viz$diff) - sd(df_viz$diff), 0),
+#      #      max(df_viz$diff) + sd(df_viz$diff)) +
+#     ylim(y_min, ifelse(y_max <= 0, 2, y_max)) +
+#     xlim(year_min - 0.5, year_max + 0.5) +
+#     geom_col_interactive(aes(x = year, y = diff, fill = diff_color,
+#                              tooltip = paste(round(diff, 1), "%"), data_id = year)) +
+#     geom_hline(yintercept = 0, color = "grey") +
+#     geom_text(aes(x = year, y = diff, label = paste0(round(diff, 1), "%"), vjust = label_position)) +
+#     scale_fill_manual(values = c("0" = "#4ED47C", 
+#                                  "1" = "#FEE474", 
+#                                  "2" = "#FF9080"), 
+#                       labels = c("0" = "On target", 
+#                                  "1" = "Close to target",
+#                                   "2" = "Off target"),
+#                       name = "") +
+#     labs(title = "Deviation from the target (%)",
+#          y = "Deviation (%)",
+#          x = "Year")
+#   
+#   gg2
+# }
+# 
+# 
+# modeshare_box <- function(df, region){
+#   
+#   df_sparkline <- 
+#     df_modeshare |> 
+#       filter(c40_region == region) |> 
+#     select(year, trips_perc)
+#   
+#   sparkline <- plot_ly(df_sparkline) %>%
+#     add_lines(
+#       x = ~year, y = ~trips_perc,
+#       color = I("white"), span = I(1),
+#       fill = 'tozeroy', alpha = 0.2
+#     ) %>%
+#     layout(
+#       xaxis = list(visible = F, showgrid = F, title = ""),
+#       yaxis = list(visible = F, showgrid = F, title = ""),
+#       hovermode = "x",
+#       margin = list(t = 0, r = 0, l = 0, b = 0),
+#       font = list(color = "white"),
+#       paper_bgcolor = "transparent",
+#       plot_bgcolor = "transparent"
+#     ) %>%
+#     config(displayModeBar = F) %>%
+#     htmlwidgets::onRender(
+#       "function(el) {
+#       var ro = new ResizeObserver(function() {
+#          var visible = el.offsetHeight > 200;
+#          Plotly.relayout(el, {'xaxis.visible': visible});
+#       });
+#       ro.observe(el);
+#     }"
+#     )
+#   
+#   max_year <- max(df_transport$year)
+#   min_year <- min(df_transport$year)
+#   max_year_value <- df_sparkline |> filter(year == max_year) |> pull(trips_perc)
+#   min_year_value <- df_sparkline |> filter(year == min_year) |> pull(trips_perc)
+#   trips_average <- mean(df_sparkline$trips_perc)
+#   peaked_trips <- df_sparkline |> slice_max(trips_perc)
+#   
+#   
+#   value_box(
+#     title = region,
+#     value = glue("{max_year}: {max_year_value}%"),
+#     p(glue("Started at {min_year_value}% ({min_year})")),
+#     p(glue("Averaged {trips_average}% over {min_year}-{max_year}")),
+#     p(glue("Peaked {peaked_trips$trips_perc}% in {peaked_trips$year}")),
+#     showcase = sparkline,
+#     full_screen = TRUE,
+#     theme = "success"
+#   )
+# }
+
+viz_emissions_target_history <- function(df, per_capita = FALSE, 
+                                         plot_title="", 
+                                         year_min = 2015, 
+                                         year_max = 2023){
   
   if(per_capita == FALSE){
     
@@ -523,12 +658,18 @@ target_deviation_barplot2 <- function(df, per_capita=FALSE, plot_title="",
       mutate(
         across(any_of(c(emissions_var, target_var)), ~ ./ 1000000000),
         across(where(is.numeric), as.double),
-        across(where(is.numeric), round,3))
+        across(where(is.numeric), round,3),
+        diff =round((eval(parse(text=emissions_var))/eval(parse(text=target_var))-1)*100,2),
+        diff_color=ifelse(diff <= 10, 0, 
+                          ifelse(diff > 10 & diff <= 20, 1, 2)),
+        #diff_color=ifelse(diff > 10, 2, diff_color),
+        diff_color = as.factor(diff_color),
+        label_position = ifelse(diff*1 >= 0, -0.5, 1.2)) |> 
+      rename("actual" = "actual_emissions_tco2e",
+             "target" = "target_emissions_tco2e")
     
   } else {
-    selected_vars <- c("year", 
-                       "actual_emissions_per_capita_tco2e",
-                       "target_emissions_per_capita_tco2e")
+    selected_vars <- c("year", "actual_emissions_per_capita_tco2e", "target_emissions_per_capita_tco2e")
     
     year_var<-selected_vars[1]
     emissions_var<-selected_vars[2]
@@ -539,99 +680,72 @@ target_deviation_barplot2 <- function(df, per_capita=FALSE, plot_title="",
       filter(year %in% year_min:year_max) |> 
       mutate(
         across(where(is.numeric), as.double),
-        across(where(is.numeric), round,3))
+        across(where(is.numeric), round,3),
+        diff =round((eval(parse(text=emissions_var))/eval(parse(text=target_var))-1)*100,2),
+        diff_color=ifelse(diff <= 10, 0, 
+                          ifelse(diff > 10 & diff <= 20, 1, 2)),
+        #diff_color=ifelse(diff > 10, 2, diff_color),
+        diff_color = as.factor(diff_color),
+        label_position = ifelse(diff*1 >= 0, -0.5, 1.2)) |> 
+      rename("actual" = "actual_emissions_per_capita_tco2e",
+             "target" = "target_emissions_per_capita_tco2e")
   }
   
-  df_viz <- df_viz |>
-    mutate(diff =round((eval(parse(text=emissions_var))/eval(parse(text=target_var))-1)*100,2),
-           diff_color=ifelse(diff <= 10, 0, 
-                             ifelse(diff > 10 & diff <= 20, 1, 2)),
-           #diff_color=ifelse(diff > 10, 2, diff_color),
-           diff_color = as.factor(diff_color),
-           label_position = ifelse(diff*1 >= 0, -0.5, 1.2))
+  # df_viz <- df_viz |> 
+  #   pivot_longer(cols = starts_with(c("actual", "target")), names_to = "variable", values_to = "value") |> 
   
-  y_min <- ifelse(min(df_viz$diff) < 0, min(df_viz$diff) - sd(df_viz$diff), 0)
-  y_max <- max(df_viz$diff) + sd(df_viz$diff)
-  #y_max <- 0
-
-  gg2 <- df_viz |> 
-    ggplot() +
-     # ylim(ifelse(min(df_viz$diff) < 0, min(df_viz$diff) - sd(df_viz$diff), 0),
-     #      max(df_viz$diff) + sd(df_viz$diff)) +
-    ylim(y_min, ifelse(y_max <= 0, 2, y_max)) +
-    xlim(year_min - 0.5, year_max + 0.5) +
-    geom_col_interactive(aes(x = year, y = diff, fill = diff_color,
-                             tooltip = paste(round(diff, 1), "%"), data_id = year)) +
-    geom_hline(yintercept = 0, color = "grey") +
-    geom_text(aes(x = year, y = diff, label = paste0(round(diff, 1), "%"), vjust = label_position)) +
+  
+  df_viz |> 
+    mutate(diff_label = glue::glue('<b style="font-size:12pt;">*{round(diff,1)}%*</b><br>*from<br>target*')) |> 
+    ggplot(aes(x = year)) +
+    # geom_col_interactive(aes(y = actual, fill = diff_color,
+    #                          tooltip = actual, data_id = year),
+    #          color = "darkgrey") +
+    geom_col(aes(y = actual, fill = diff_color), color = "darkgrey") +
+    geom_textline(aes(y = target),
+                  label = "GHG targets", size = 4, hjust = 0.9, vjust = 1.3,
+                  linewidth = 1, 
+                  linecolor = c40_colors("blue"), 
+                  linetype = 5, 
+                  color = "black") +
+    # geom_point_interactive(aes(y = target,tooltip = actual, data_id = year),
+    #                        colour = "black", size = 1) +
+    geom_point(aes(y = target), colour = "black", size = 1) +
+    geom_text(aes(y = min(df_viz$actual) - sd(df_viz$actual) * 5,
+                        label = round(actual, 2))) +
+    geom_text(aes(y = target, label = round(target, 2)),
+              vjust = -1) +
+    geom_text(aes(y = min(df_viz$actual) - sd(df_viz$actual) * 2.5, 
+                  x = min(year), angle = 90, vjust = 5.4,
+                  label = "GHG emission")) +
+    geom_richtext(aes(y = max(df_viz$actual) + sd(df_viz$actual) * 3, 
+                      label = diff_label,
+                      fill = diff_color),
+                  size = 2.5, 
+                  lineheight = .8,
+                  show.legend = FALSE) +
+    coord_cartesian(ylim = c(min(df_viz$actual) - sd(df_viz$actual) * 5,
+                             max(df_viz$actual) + sd(df_viz$actual) * 5)) +
     scale_fill_manual(values = c("0" = "#4ED47C", 
                                  "1" = "#FEE474", 
                                  "2" = "#FF9080"), 
                       labels = c("0" = "On target", 
                                  "1" = "Close to target",
-                                  "2" = "Off target"),
+                                 "2" = "Off target"),
                       name = "") +
-    labs(title = "Deviation from the target (%)",
-         y = "Deviation (%)",
-         x = "Year")
-  
-  gg2
+    scale_x_continuous(breaks = c(seq(min(df_viz$year), max(df_viz$year)))) +
+    labs(x = "", y = "") +
+    theme_minimal() + 
+    theme(
+      #plot.title = element_markdown(),
+      #plot.subtitle = element_markdown(),
+      legend.position = "none",
+          legend.text = element_text(size = 9),
+          title = element_text(size = 11),
+          axis.text.x = element_text(size = 9),
+          axis.text.y = element_text(size = 9),
+          panel.grid.minor.x = element_blank())
 }
-
-
-modeshare_box <- function(df, region){
-  
-  df_sparkline <- 
-    df_modeshare |> 
-      filter(c40_region == region) |> 
-    select(year, trips_perc)
-  
-  sparkline <- plot_ly(df_sparkline) %>%
-    add_lines(
-      x = ~year, y = ~trips_perc,
-      color = I("white"), span = I(1),
-      fill = 'tozeroy', alpha = 0.2
-    ) %>%
-    layout(
-      xaxis = list(visible = F, showgrid = F, title = ""),
-      yaxis = list(visible = F, showgrid = F, title = ""),
-      hovermode = "x",
-      margin = list(t = 0, r = 0, l = 0, b = 0),
-      font = list(color = "white"),
-      paper_bgcolor = "transparent",
-      plot_bgcolor = "transparent"
-    ) %>%
-    config(displayModeBar = F) %>%
-    htmlwidgets::onRender(
-      "function(el) {
-      var ro = new ResizeObserver(function() {
-         var visible = el.offsetHeight > 200;
-         Plotly.relayout(el, {'xaxis.visible': visible});
-      });
-      ro.observe(el);
-    }"
-    )
-  
-  max_year <- max(df_transport$year)
-  min_year <- min(df_transport$year)
-  max_year_value <- df_sparkline |> filter(year == max_year) |> pull(trips_perc)
-  min_year_value <- df_sparkline |> filter(year == min_year) |> pull(trips_perc)
-  trips_average <- mean(df_sparkline$trips_perc)
-  peaked_trips <- df_sparkline |> slice_max(trips_perc)
-  
-  
-  value_box(
-    title = region,
-    value = glue("{max_year}: {max_year_value}%"),
-    p(glue("Started at {min_year_value}% ({min_year})")),
-    p(glue("Averaged {trips_average}% over {min_year}-{max_year}")),
-    p(glue("Peaked {peaked_trips$trips_perc}% in {peaked_trips$year}")),
-    showcase = sparkline,
-    full_screen = TRUE,
-    theme = "success"
-  )
-}
-
 
 
 

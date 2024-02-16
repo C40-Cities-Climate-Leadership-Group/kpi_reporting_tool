@@ -33,11 +33,6 @@ df_kpi_regional_emissions <- df_kpi_regional_emissions |>
 # check similarity between columns names
 #colnames(df_kpi_wide_emissions) %in% colnames(df_kpi_regional_emissions)
 
-### Libraries
-library(c40tools)
-library(tidyverse)
-library(here)
-library(DBI)
 
 ### Extract
 ### Access metadata in DW
@@ -168,9 +163,6 @@ df_transport_orig <- readRDS(here("data/df_transport_orig.rds"))
 df_metadata <- readRDS(here("data/df_metadata.rds"))
 
 
-
-
-
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                Save outputs                             ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,3 +173,16 @@ df_metadata <- readRDS(here("data/df_metadata.rds"))
 # write_csv(df_ghg_inventories, here("kpi/data/df_ghg_inventories.csv"))
  
 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                  AQ data                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+df_aq <- tbl(con,
+             sql("
+          SELECT t1.city_id, city, country, region, current_member, year, population_weighted_pm25_ug_per_m3
+          FROM public.fact_city_pm25_concentration t1
+          LEFT JOIN dim_cities t2 ON t1.city_id = t2.city_id
+          WHERE created_at = (SELECT MAX(created_at) FROM public.fact_city_pm25_concentration)
+          and current_member = 'true'
+              ")) |> 
+  collect()

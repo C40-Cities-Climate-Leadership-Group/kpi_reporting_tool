@@ -1,3 +1,8 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 
 
 
@@ -67,23 +72,32 @@ Row
 ```{r}
 #source(here("scripts/viz_testing.R"))
 
+
 page_fillable(
   br(),
   h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'> GHG Emissions")))),
   br(),
   layout_column_wrap(
     navset_card_tab(
-      title = "Deviation from the emission target", 
+      card_header(
+      h2(markdown("**Actual and Target emissions per year**")), 
+      h5(markdown(glue::glue("Actual deviation from target. <span style='color:{c40_colors('green')}'>On target</span>,
+                            <span style='color:{c40_colors('yellow')}'>Close to target</span>,
+                            <span style='color:{c40_colors('red')}'>Off target</span>")))
+      ),
       height = '1000px',
       nav_panel(
         title = "Absolute",
         fluidRow(
             card(
-              card_header(h2("C40 wide City")),
+              card_header(
+                h2("C40 wide City")),
+              full_screen = TRUE,
               viz_city_tot_absolute
           ),
           navset_card_tab(
             title = h2("Regions"),
+            full_screen = TRUE,
             nav_panel(
               title = unique(df_kpi_regional_emissions$entity)[1],
               viz_reg_1absolute
@@ -124,6 +138,7 @@ page_fillable(
           ),
           navset_card_tab(
             title = h2("Regions"),
+            full_screen = TRUE,
             nav_panel(
               title = unique(df_kpi_regional_emissions$entity)[1],
               viz_reg_1percapita
@@ -200,34 +215,25 @@ myMenuItems <- c("downloadPNG", "downloadJPEG", "downloadPDF", "downloadCSV")
 
 ```{r}
 pie_chart <- tab_inventories |>
-#set up highchart object
   hchart("pie", 
-         #mapping for pie chart
-         hcaes(x = n_inventories_range, y = n, drilldown=n_inventories_range,
-               color = c(
-          "#d4444d", "#fed939", "#03c245")), 
+         hcaes(x = n_inventories_range, y = n, 
+               drilldown = n_inventories_range, 
+               color = c("#d4444d", "#fed939", "#03c245")), 
          name="Cities per number of inventories")|>
-  #add title
-  #hc_title(text = "Number of inventories") |> 
   hc_plotOptions(pie = list(innerSize="70%"))
-
 
 help <- bs_button(bs_icon("info-circle", size = 30), button_type = "info", button_size = "small") |> 
   bs_embed_tooltip(title = "Click on the graph category to see the year of every inventory", placement = "right")
 
-
 drilldown_chart <- pie_chart |>
   hc_drilldown(
-    #map to data
     series = list_parse(by_subtype),
     allowPointDrilldown = TRUE,
-    #set stylings of data labels that offer drill down views
     activeDataLabelStyle = list(
       textDecoration="none",
       color="black"
     )
   ) |> 
-  #hc_title(text="Cities per number of inventories available") |> 
   hc_title(
     text = glue::glue("<div>Cities per number of inventories available {help}</div>"),
     style = list(color = "#22A884", useHTML = TRUE)) |> 
@@ -281,6 +287,8 @@ page_fillable(
   )
        ),
   card(
+    full_screen = TRUE,
+    height = 600,
     card_header(
       div(reading_example, help),
       drilldown_chart
@@ -292,4 +300,24 @@ page_fillable(
 ```
 
 
+
+Overall GHG trend  {data-navmenu="GHG emissions" data-height='4500px'}
+=====================================  
+
+Row
+-------------------------------------
+
+```{r}
+ghg_trend <- paste0(get_googledrive_path(), 
+               "Shared drives/BPMI/Business Planning and Reporting/C40 Analytics Team /KPIs and GHG forecasting/Outputs KPIs/CAP cities trajectories.png")
+
+page_fillable(
+  br(),
+  #h1(strong(reactablefmtr::html(glue::glue("<img src={img_src} width='60' height='55'>Overall GHG Trend")))),
+  br(),
+  card(full_screen = TRUE, fill = TRUE,
+    card_image(file = ghg_trend, fill = FALSE)
+  )
+)
+```
 
